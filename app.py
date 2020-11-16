@@ -75,43 +75,48 @@ def display_alignments(alignments, prompts, sents):
                     table[i][j+1] = "-"
         return table
 
-    for iter, (x, ps, ss) in enumerate(zip(alignments, prompts, sents)):
-        st.write(f"### Centroid Story: {x.cluster[0]} (Steiner distance {x.steiner_dists.sum().item():,.1f} | SP score {x.sp_dists.sum():,.1f})")
+    align_idx = st.slider("Use this slider to choose the centroid story", 0, len(alignments)-1, 0)
 
-        x.alignment[x.gaps] = -1
+    x = alignments[align_idx]
+    ps = prompts[align_idx]
+    ss = sents[align_idx]
 
-        # Plot alignment heatmap with pyplot
-        N, T = x.alignment.shape
+    st.write(f"### Centroid Story: {x.cluster[0]} (Steiner distance {x.steiner_dists.sum().item():,.1f} | SP score {x.sp_dists.sum():,.1f})")
 
-        # Plot alignment heatmap with plotly
-        hover = get_alignment(x.cluster, x.alignment[:,1:]-1, x.star_dists, ps, ss)
+    x.alignment[x.gaps] = -1
 
-        fig = go.Figure()
-        fig.add_trace(go.Heatmap(
-            z = x.alignment,
-            type = "heatmap",
-            colorscale = "viridis",
-            text = hover,
-            colorbar=dict(title="Original Index"),
-            hovertemplate = "Story: %{y} | Index: %{x}<br>%{text}<extra></extra>",
-        ))
-        layout = go.Layout(
-            xaxis = go.layout.XAxis(
-                title = go.layout.xaxis.Title(
-                    text='Index',
-                ),
+    # Plot alignment heatmap with pyplot
+    N, T = x.alignment.shape
+
+    # Plot alignment heatmap with plotly
+    hover = get_alignment(x.cluster, x.alignment[:,1:]-1, x.star_dists, ps, ss)
+
+    fig = go.Figure()
+    fig.add_trace(go.Heatmap(
+        z = x.alignment,
+        type = "heatmap",
+        colorscale = "viridis",
+        text = hover,
+        colorbar=dict(title="Original Index"),
+        hovertemplate = "Story: %{y} | Index: %{x}<br>%{text}<extra></extra>",
+    ))
+    layout = go.Layout(
+        xaxis = go.layout.XAxis(
+            title = go.layout.xaxis.Title(
+                text='Index',
             ),
-            yaxis=go.layout.YAxis(
-                title = go.layout.yaxis.Title(
-                    text='Story',
-                )
+        ),
+        yaxis=go.layout.YAxis(
+            title = go.layout.yaxis.Title(
+                text='Story',
             )
         )
-        fig.update_layout(layout)
-        fig.update_yaxes(autorange="reversed")
-        st.plotly_chart(fig, use_container_width=True)
+    )
+    fig.update_layout(layout)
+    fig.update_yaxes(autorange="reversed")
+    st.plotly_chart(fig, use_container_width=True)
 
-        write_alignment(x.cluster, x.alignment[:,1:]-1, x.star_dists, ps, ss)
+    write_alignment(x.cluster, x.alignment[:,1:]-1, x.star_dists, ps, ss)
 
 
 def viz(alignments, prompts, sents):
