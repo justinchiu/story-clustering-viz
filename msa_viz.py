@@ -344,14 +344,15 @@ def viz(alignments):
 
     alignments = find_best_scores(alignments)
 
-    data_dir = "/home/jtc257/code/story-clustering/output/sbert_train/"
+    #data_dir = "viz_data"
+    data_dir = "http://s3.amazonaws.com/testbucket3141775/"
 
     #prompts = open("/home/jtc257/code/stories/data/writingPrompts/train.wp_source", "r").readlines()
     #story2sent = pickle.load(open(data_dir + "story2sent.0.pkl", "rb"))
     #sents = open(data_dir + "sent_text.0.txt", "r").readlines()
-    prompts = open("viz_data/train.wp_source", "r").readlines()
-    story2sent = pickle.load(open("viz_data/story2sent.0.pkl", "rb"))
-    sents = open("viz_data/sent_text.0.txt", "r").readlines()
+    prompts = open(data_dir + "train.wp_source", "r").readlines()
+    story2sent = pickle.load(open(data_dir + "story2sent.0.pkl", "rb"))
+    sents = open(data_dir + "sent_text.0.txt", "r").readlines()
 
 
     st.markdown("## Progressive alignments with G=125")
@@ -361,5 +362,7 @@ def viz(alignments):
 if __name__ == "__main__":
     # cp-ed to below
     #alignments = load_stuff("msa_output_greedy/msa_savefile.Gc125.0.G125.0.Gx50.0.Gz250.0.Gxz0.size5.min_len10.min_d130.0.n100000.k256.pkl")
-    alignments = load_stuff("viz_data/alignments.pkl")
+    #alignments = load_stuff("viz_data/alignments.pkl")
+    data_dir = "http://s3.amazonaws.com/testbucket3141775/"
+    alignments = load_stuff(data_dir + "alignments.pkl")
     viz(alignments)
